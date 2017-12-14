@@ -1,4 +1,4 @@
-package fr.jdrape.adevent.adevent2017;
+package fr.jdrape.adevent.adevent2017.enumeration;
 
 import java.util.Arrays;
 import java.util.List;

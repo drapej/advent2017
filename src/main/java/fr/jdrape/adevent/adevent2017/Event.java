@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.jdrape.adevent.adevent2017.bean.Noeud;
+import fr.jdrape.adevent.adevent2017.enumeration.TournerEnum;
 import fr.jdrape.adevent.adevent2017.utils.ChaineUtils;
 import fr.jdrape.adevent.adevent2017.utils.ListUtils;
 import fr.jdrape.adevent.adevent2017.utils.ReaderFileUtils;
