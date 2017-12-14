@@ -1,30 +1,119 @@
 package fr.jdrape.adevent.adevent2017;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.jdrape.adevent.adevent2017.bean.Noeud;
 import fr.jdrape.adevent.adevent2017.utils.ChaineUtils;
 import fr.jdrape.adevent.adevent2017.utils.ListUtils;
 import fr.jdrape.adevent.adevent2017.utils.ReaderFileUtils;
 
 public class Event {
 
-	private static final String ressourcesFolder = "src/ressources";
-
-	public static void main(String[] args) throws IOException {
-		day6_2();
+	public static void main(String[] args) throws Exception {
+		day7_1();
 	}
 
-	static void day6_2() throws IOException {
+	static void day7_1() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("jour7.txt");
+
+		Pattern pattern = Pattern.compile("([a-zA-Z]*) [(]([0-9]*)[)](?: -> (([a-z]+).*))?");
+
+		Map<String, Noeud> liste = new HashMap<>();
+		Noeud current;
+		String[] detail;
+		for (String line : lines) {
+
+			Matcher matcher = pattern.matcher(line);
+			matcher.find();
+			detail = StringUtils.split(matcher.group(3), ",");
+			current = new Noeud(Integer.valueOf(matcher.group(2)), matcher.group(1));
+			liste.put(current.getNom(), current);
+
+			// gestion des fils
+			if (ArrayUtils.isNotEmpty(detail)) {
+				// pour chacun on l'ajoute au parent
+				Noeud nodeFils;
+				for (String fils : detail) {
+					// s'il existe dans le temporaire on le récupère
+					if (liste.containsKey(fils.trim())) {
+						nodeFils = liste.get(fils.trim());
+					} else {
+						// si on le crée
+						nodeFils = new Noeud(null, fils.trim());
+					}
+					current.addFils(nodeFils);
+				}
+			}
+
+			// si un noeud contient en tant que fils le noeud courant, on l'ajoute à ce
+			// noeud
+			for (Noeud noeud : liste.values()) {
+				if (noeud.getFils().containsKey(current.getNom())) {
+					noeud.addFils(current);
+				}
+			}
+		}
+
+		Noeud parentNode = null;
+		for (Noeud node : liste.values()) {
+			if (node.getParent() == null) {
+				parentNode = node;
+				break;
+			}
+		}
+
+		for (Noeud fils : parentNode.getFils().values()) {
+			fils.calculerPoidsTotalWeight();
+		}
+
+		checkPoids(parentNode);
+
+	}
+
+	static boolean checkPoids(Noeud noeud) {
+
+		Noeud noeudLourd = null;
+		Noeud noeudNormal = null;
+		boolean existeDifference = false;
+		for (Noeud fils : noeud.getFils().values()) {
+			if (noeudLourd == null) {
+				noeudNormal = fils;
+				noeudLourd = fils;
+			} else if (!noeudLourd.getFilsWeight().equals(fils.getFilsWeight())) {
+				existeDifference = true;
+				if (noeudLourd.getFilsWeight() < fils.getFilsWeight()) {
+					noeudNormal = noeudLourd;
+					noeudLourd = fils;
+				} else {
+					noeudNormal = fils;
+				}
+			}
+		}
+
+		if (existeDifference) {
+			if (checkPoids(noeudLourd)) {
+				System.out.println("Noeud " + noeudLourd.getPoids() + " " + noeudLourd.getFilsWeight() + " "
+						+ noeudNormal.getFilsWeight());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	static void day6_2() throws Exception {
 		List<Integer> nombres = ReaderFileUtils.getListeNombre("jour6.txt", "\t");
 		List<String> chaine = new ArrayList<>();
 		System.out.println(StringUtils.join(nombres.toArray(), "|"));
@@ -65,7 +154,7 @@ public class Event {
 		System.out.println(nextSameValue);
 	}
 
-	static void day6_1() throws IOException {
+	static void day6_1() throws Exception {
 		List<Integer> nombres = ReaderFileUtils.getListeNombre("jour6demo.txt", "\t");
 		List<String> chaine = new ArrayList<>();
 		System.out.println(StringUtils.join(nombres.toArray(), "|"));
@@ -186,8 +275,8 @@ public class Event {
 
 	}
 
-	static void day5_2() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "jour5.txt"));
+	static void day5_2() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("jour5.txt");
 		// convertit string en liste nombre
 		List<Integer> nombres = new ArrayList<>();
 		for (String valeur : lines) {
@@ -212,8 +301,8 @@ public class Event {
 		System.out.println(nombreStep);
 	}
 
-	static void day5_1() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "jour5.txt"));
+	static void day5_1() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("jour5.txt");
 		// convertit string en liste nombre
 		List<Integer> nombres = new ArrayList<>();
 		for (String valeur : lines) {
@@ -234,8 +323,8 @@ public class Event {
 		System.out.println(nombreStep);
 	}
 
-	static void day4_2() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "jour4.txt"));
+	static void day4_2() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("jour4.txt");
 		int nombre = 0;
 
 		// boucle sur chaque ligne
@@ -260,8 +349,8 @@ public class Event {
 		System.out.println(nombre);
 	}
 
-	static void day4_1() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "jour4.txt"));
+	static void day4_1() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("jour4.txt");
 		int nombre = 0;
 
 		// boucle sur chaque ligne
@@ -279,8 +368,8 @@ public class Event {
 		System.out.println(nombre);
 	}
 
-	static void day2_2() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "dateJour2"));
+	static void day2_2() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("dateJour2");
 		Integer somme = 0;
 
 		List<Integer> nombres;
@@ -310,8 +399,8 @@ public class Event {
 		System.out.println(somme);
 	}
 
-	static void day2_1() throws IOException {
-		List<String> lines = Files.readAllLines(Paths.get(ressourcesFolder, "dateJour2"));
+	static void day2_1() throws Exception {
+		List<String> lines = ReaderFileUtils.getListeChaine("dateJour2");
 		Integer somme = 0;
 
 		// boucle sur chaque ligne

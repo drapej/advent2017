@@ -20,7 +20,7 @@ public class ReaderFileUtils {
 	}
 
 	public static List<String> getListeChaine(String nomFichier) throws Exception {
-		return Files.readAllLines(Paths.get(ReaderFileUtils.class.getResource("jour5.txt").toURI()));
+		return Files.readAllLines(Paths.get(ReaderFileUtils.class.getResource("/" + nomFichier).toURI()));
 	}
 
 }

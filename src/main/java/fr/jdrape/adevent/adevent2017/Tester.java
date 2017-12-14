@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 public class Tester {
 
 	public static void main(String[] args) {
-		String chaine = "dsqd (62) -> ddsx, dsds";
 		// String chaineSimple = "dsqd (62) -> ";
 		String chaineSimple = "dsqd (62) -> sdsq, dsds";
 
@@ -17,15 +16,11 @@ public class Tester {
 		// System.out.println(match.group(i));
 		// }
 
-		String line = "This order was placed for QT3000! OK?";
-		Pattern pattern = Pattern.compile("([a-zA-Z]*) [(]([0-9]*)[)](?: -> (([a-z]+).*))?");
+		Pattern pattern = Pattern.compile("([a-zA-Z]*) [(]([0-9]*)[)](?: -> (([a-z]+)).*))?");
 		Matcher matcher = pattern.matcher(chaineSimple);
-		// matcher.find();
-
-		while (matcher.find()) {
-			for (int i = 0; i < matcher.groupCount(); i++) {
-				System.out.println("Group " + i + ":" + matcher.group(i));
-			}
+		matcher.find();
+		for (int i = 0; i < matcher.groupCount(); i++) {
+			System.out.println("Group " + i + ":" + matcher.group(i));
 		}
 
 		// TODO Auto-generated method stub

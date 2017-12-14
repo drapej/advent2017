@@ -1,7 +1,10 @@
 pbga (66)
-xhth (57)
+xhth (57) -> aaaa, bbbb, cccc
 ebii (61)
 havc (66)
+aaaa (10)
+bbbb (11)
+cccc (12)
 ktlj (57)
 fwft (72) -> ktlj, cntj, xhth
 qoyq (66)
